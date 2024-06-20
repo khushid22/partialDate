@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+.p-overlaypanel.p-component{
+    transform-origin: center top;
+    top: 19px !important;
+    --overlayArrowLeft: 0px;
+    transform: translateY(0px);
+    opacity: 1;
+    position: absolute;
+    left: 7px !important;
+    background-color: #fff;
+    padding: 10px;
+    z-index: 1000;
+    border: 1px solid #c8c8c8;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    border-radius: 4px;
+}
+.p-overlaypanel-close {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; 
+    position: absolute !important;
+    top: 3px;
+    right: 3px;
+    &::before{
+        content: '\2715';
+    }
+}
