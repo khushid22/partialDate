@@ -11,6 +11,8 @@ export class AppComponent implements OnInit {
   showCalendar: boolean = false;
   currentDate: Date = new Date();
   selectedDate: Date | null = null;
+  partialSelectedYear: number | null = null;
+  partialSelectedMonth: number | null = null;
   currentYear!: number;
   currentMonth!: number;
   partialDate: boolean = false;
@@ -32,10 +34,12 @@ export class AppComponent implements OnInit {
     this.generateCalendar();
     this.currentYear = new Date().getFullYear();
     this.updateYearsGrid();
+    this.partialSelectedYear = this.currentYear;
+    this.partialSelectedMonth = this.currentMonth;
   }
 
   updateYearsGrid() {
-    this.startYear = this.currentYear - 10;
+    this.startYear = this.currentYear - 7; 
     this.endYear = this.currentYear;
     this.years = [];
 
@@ -45,24 +49,41 @@ export class AppComponent implements OnInit {
   }
 
   nextYears() {
-    this.currentYear += 10;
+    const nextYear = this.currentYear + 8;
+    if (nextYear <= 2024) {
+      this.currentYear = nextYear;
+    } else {
+      this.currentYear = 2024;
+    }
     this.updateYearsGrid();
   }
-
+  
   previousYears() {
-    this.currentYear -= 10;
+    this.currentYear -= 8;
     this.updateYearsGrid();
   }
 
-  setCurrentYear(year: any) {
-    this.currentYear = year;
-    this.dateVal = year;
+  setCurrentYear(year: number) {
+    this.partialSelectedYear = year;
+    this.dateVal = year.toString();
   }
-
+  
   setCurrentMonth(month: any) {
-    const monthIndex = this.months.findIndex(x => x.toLowerCase() == month.toLowerCase());
-    this.currentMonth = monthIndex;
-    this.dateVal = `${month}-${this.currentYear}`;
+    const monthIndex = this.months.findIndex(x => x.toLowerCase() === month.toLowerCase());
+    this.partialSelectedMonth = monthIndex;
+  
+    if (this.partialSelectedYear === null) {
+      this.partialSelectedYear = new Date().getFullYear();
+    }
+  
+    if (this.partialSelectedYear === new Date().getFullYear()) {
+      const currentMonthIndex = new Date().getMonth();
+      if (this.partialSelectedMonth && this.partialSelectedMonth > currentMonthIndex) {
+        this.partialSelectedMonth = currentMonthIndex;
+      }
+    }
+  
+    this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
   }
 
   toggleCalendar(event?: any) {
@@ -179,5 +200,39 @@ export class AppComponent implements OnInit {
     this.selectedDate = null; 
     this.dateVal = ''; 
     this.showCalendar = false; 
+    this.partialSelectedYear = null;
+    this.partialSelectedMonth = null;
   }
+
+  isPartialYearSelected(year: number): boolean {
+    return this.partialSelectedYear === year;
+  }
+
+  isPartialMonthSelected(monthIndex: number): boolean {
+    if (this.partialSelectedYear === new Date().getFullYear()) {
+      const currentMonthIndex = new Date().getMonth();
+      return this.partialSelectedMonth === monthIndex && monthIndex <= currentMonthIndex;
+    } else {
+      return this.partialSelectedMonth === monthIndex;
+    }
+  }
+  
+
+  isCurrentYear(year: number): boolean {
+    const currentDate = new Date();
+    return year === currentDate.getFullYear();
+  }
+
+  isCurrentMonth(monthIndex: number): boolean {
+    const currentDate = new Date();
+    return (
+      monthIndex === currentDate.getMonth() &&
+      this.partialSelectedYear === currentDate.getFullYear()
+    );
+  }
+
+  isNextArrowVisible(): boolean {
+    return this.currentYear < 2024;
+  }
+  
 }
