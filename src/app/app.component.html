@@ -15,7 +15,11 @@
           <th *ngFor="let day of days">{{ day }}</th>
         </tr>
         <tr *ngFor="let week of calendar">
-          <td *ngFor="let day of week" [class.selected]="isSelected(day)" [class.disabled]="isFutureDate(day)" (click)="selectDate(day)" [class.today]="isToday(day)">
+          <td *ngFor="let day of week" 
+              [class.selected]="isSelected(day)" 
+              [class.disabled]="isFutureDate(day)" 
+              (click)="selectDate(day)" 
+              [class.today]="isToday(day)">
             {{ day ? day.date?.getDate() : '' }}
           </td>
         </tr>
@@ -28,12 +32,13 @@
             <div class="year-widget-header header">
               <button pButton pRipple type="button" icon="pi pi-chevron-left" class="p-button-rounded p-button-text btn" (click)="previousYears()">&lt;</button>
               <span>{{ startYear }} - {{ endYear }}</span>
-              <button pButton type="button" icon="pi pi-chevron-right" class="p-button-rounded p-button-text btn" (click)="nextYears()">&gt;</button>
+              <button *ngIf="isNextArrowVisible()" pButton type="button" icon="pi pi-chevron-right" class="p-button-rounded p-button-text btn" (click)="nextYears()">&gt;</button>
             </div>
             <div class="year-widget-content">
               <div *ngFor="let row of years" class="grid-container">
                 <div *ngFor="let year of row" class="grid-item"
-                     [class.current-month-year]="year === currentYear && partialDate"
+                     [class.selected]="isPartialYearSelected(year)"
+                     [class.current]="isCurrentYear(year)"
                      (click)="setCurrentYear(year)">
                   {{ year }}
                 </div>
@@ -42,11 +47,16 @@
           </div>
           <div class="widget-wrapper-right">
             <div class="month-widget-header">
-              <span>{{ currentYear }}</span>
+              <span>{{ partialSelectedYear }}</span>
             </div>
             <div class="month-widget-content grid-container">
               <ng-container *ngFor="let month of months; let i = index">
-                <div class="grid-item" [class.current-month-year]="currentYear === currentDate.getFullYear() && i === currentDate.getMonth() && partialDate" (click)="setCurrentMonth(month)">{{ month }}</div>
+                <div class="grid-item" 
+                     [class.selected]="isPartialMonthSelected(i)" 
+                     [class.current]="isCurrentMonth(i)"
+                     (click)="setCurrentMonth(month)">
+                  {{ month }}
+                </div>
               </ng-container>
             </div>
           </div>
