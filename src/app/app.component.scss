@@ -32,7 +32,7 @@
  table {
   width: 100%;
  }
- td {
+td {
   text-align: center;
   color: #333333;
   padding: 0.5em;
@@ -40,8 +40,8 @@
   border-radius: 3px;
  }
  .selected {
-  background-color: #007bff;
-  color: #fff;
+    background-color: #007bff;
+    color: #fff;
  }
  .today {
   background-color: #f0f0f0;
@@ -144,6 +144,20 @@
   color: #ccc; 
   pointer-events: none; 
 }
+.full-date-button {
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #000000;
+  cursor: pointer;
+}
+
+
+
+ 
 
 
  
