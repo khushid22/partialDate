@@ -1,9 +1,9 @@
 <div class="date-picker-container">
   <input type="text" id="datepicker" style="width: 333px;" [(ngModel)]="dateVal" placeholder="Select Date" (click)="toggleCalendar($event);partialDate=false;">
-  <span *ngIf="dateVal" (click)="clearAndEnterNewDate()" class="clear-button">×</span> 
+  <span *ngIf="dateVal" (click)="clearAndEnterNewDate()" class="clear-button">×</span>
   <div class="datepicker-widget-container">
     <div class="calendar-widget" *ngIf="showCalendar" (click)="preventClosing($event)">
-      <button *ngIf="showCalendar" class="partial-date-button" #partialDateBtn (click)="op.toggle($event);partialDate=true;showCalendar=false">{{'partial date'}}</button>
+      <button *ngIf="showCalendar && !partialDate" class="partial-date-button" #partialDateBtn (click)="togglePartialDate($event);partialDate=true;showCalendar=false">{{'partial date'}}</button>
       <div class="calendar-header">
         <button (click)="prevMonth()" class="btn">&lt;</button>
         <span>{{ months[currentMonth] }}</span>
@@ -25,8 +25,9 @@
         </tr>
       </table>
     </div>
-    <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true">
+    <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true" (click)="preventClosing($event)">
       <ng-template pTemplate>
+        <button *ngIf="partialDate" class="full-date-button" (click)="toggleFullDate($event)">{{'full date'}}</button>
         <div class="widget-wrapper">
           <div class="widget-wrapper-left">
             <div class="year-widget-header header">
@@ -42,7 +43,7 @@
                      (click)="setCurrentYear(year)">
                   {{ year }}
                 </div>
-              </div>              
+              </div>
             </div>
           </div>
           <div class="widget-wrapper-right">
@@ -51,7 +52,8 @@
             </div>
             <div class="month-widget-content grid-container">
               <ng-container *ngFor="let month of months; let i = index">
-                <div class="grid-item" 
+                <div *ngIf="!(partialSelectedYear === 2024 && i > 5)"
+                     class="grid-item" 
                      [class.selected]="isPartialMonthSelected(i)" 
                      [class.current]="isCurrentMonth(i)"
                      (click)="setCurrentMonth(month)">
@@ -65,3 +67,4 @@
     </p-overlayPanel>
   </div>
 </div>
+
