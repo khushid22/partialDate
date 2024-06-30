@@ -70,20 +70,17 @@ export class AppComponent implements OnInit {
   
   setCurrentMonth(month: any) {
     const monthIndex = this.months.findIndex(x => x.toLowerCase() === month.toLowerCase());
-    this.partialSelectedMonth = monthIndex;
+    const maxMonthIndex = this.partialSelectedYear === 2024 ? 5 : 11; // June is month index 5
   
-    if (this.partialSelectedYear === null) {
-      this.partialSelectedYear = new Date().getFullYear();
-    }
+    if (monthIndex <= maxMonthIndex) {
+      this.partialSelectedMonth = monthIndex;
   
-    if (this.partialSelectedYear === new Date().getFullYear()) {
-      const currentMonthIndex = new Date().getMonth();
-      if (this.partialSelectedMonth && this.partialSelectedMonth > currentMonthIndex) {
-        this.partialSelectedMonth = currentMonthIndex;
+      if (this.partialSelectedYear === null) {
+        this.partialSelectedYear = new Date().getFullYear();
       }
-    }
   
-    this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+      this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+    }
   }
 
   toggleCalendar(event?: any) {
@@ -100,6 +97,20 @@ export class AppComponent implements OnInit {
         }
       }
     }
+  }
+
+  toggleFullDate(event: any) {
+    this.partialDate = false;
+    this.showCalendar = true;
+    this.overlaypanel.hide();
+    this.preventClosing(event);
+  }
+
+  togglePartialDate(event: any) {
+    this.partialDate = true;
+    this.showCalendar = false;
+    this.overlaypanel.show(event);
+    this.preventClosing(event);
   }
 
   preventClosing(event: Event) {
@@ -209,14 +220,16 @@ export class AppComponent implements OnInit {
   }
 
   isPartialMonthSelected(monthIndex: number): boolean {
-    if (this.partialSelectedYear === new Date().getFullYear()) {
-      const currentMonthIndex = new Date().getMonth();
-      return this.partialSelectedMonth === monthIndex && monthIndex <= currentMonthIndex;
-    } else {
-      return this.partialSelectedMonth === monthIndex;
-    }
-  }
+    const currentMonthIndex = new Date().getMonth();
+    const maxMonthIndex = this.partialSelectedYear === 2024 ? 5 : 11;
   
+    return (
+      this.partialSelectedMonth === monthIndex &&
+      ((this.partialSelectedYear === new Date().getFullYear() && monthIndex <= currentMonthIndex) ||
+        (this.partialSelectedYear === 2024 && monthIndex <= maxMonthIndex) ||
+        this.partialSelectedYear !== new Date().getFullYear())
+    );
+  }
 
   isCurrentYear(year: number): boolean {
     const currentDate = new Date();
@@ -234,5 +247,5 @@ export class AppComponent implements OnInit {
   isNextArrowVisible(): boolean {
     return this.currentYear < 2024;
   }
-  
 }
+
