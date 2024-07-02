@@ -3,7 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from "@angular/forms";
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -12,9 +15,10 @@ import { FormsModule } from '@angular/forms';
     BrowserModule,
     OverlayPanelModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    ConfirmDialogModule
   ],
-  providers: [],
+  providers: [ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
