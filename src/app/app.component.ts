@@ -80,13 +80,16 @@ export class AppComponent implements OnInit {
   }
 
   checkPartialDateCompletion() {
-    if (this.partialSelectedYear !== null && this.partialSelectedMonth !== null) {
-      this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+    if (this.partialSelectedYear !== null) {
+      if (this.partialSelectedMonth !== null) {
+        this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+      } else {
+        this.dateVal = `${this.partialSelectedYear}`;
+      }
       this.partialDate = false;
       this.overlaypanel.hide();
     }
   }
-
 
   toggleCalendar(event?: any) {
     if (event?.target?.value == "") {
