@@ -8,17 +8,21 @@
         <button (click)="prevMonth()" class="btn">&lt;</button>
         <span>{{ months[currentMonth] }}</span>
         <span>{{ currentYear }}</span>
-        <button (click)="nextMonth()" class="btn" disabled>&gt;</button>
+        <button
+          (click)="nextMonth()"
+          class="btn"
+          [disabled]="currentYear >= currentDate.getFullYear() && currentMonth >= currentDate.getMonth()"
+        >&gt;</button>
       </div>
       <table>
         <tr>
           <th *ngFor="let day of days">{{ day }}</th>
         </tr>
         <tr *ngFor="let week of calendar">
-          <td *ngFor="let day of week" 
-              [class.selected]="isSelected(day)" 
-              [class.disabled]="isFutureDate(day)" 
-              (click)="selectDate(day)" 
+          <td *ngFor="let day of week"
+              [class.selected]="isSelected(day)"
+              [class.disabled]="isFutureDate(day)"
+              (click)="selectDate(day)"
               [class.today]="isToday(day)">
             {{ day ? day.date?.getDate() : '' }}
           </td>
@@ -52,19 +56,21 @@
             </div>
             <div class="month-widget-content grid-container">
               <ng-container *ngFor="let month of months; let i = index">
-                <div *ngIf="!(partialSelectedYear === 2024 && i > 5)"
-                     class="grid-item" 
-                     [class.selected]="isPartialMonthSelected(i)" 
+                <div class="grid-item"
+                     [class.selected]="isPartialMonthSelected(i)"
                      [class.current]="isCurrentMonth(i)"
-                     (click)="setCurrentMonth(month)">
+                     [class.non-clickable]="!isMonthSelectable(i)"
+                     (click)="isMonthSelectable(i) ? setCurrentMonth(month) : null">
                   {{ month }}
                 </div>
               </ng-container>
-            </div>
+            </div>         
           </div>
         </div>
       </ng-template>
     </p-overlayPanel>
   </div>
 </div>
+
+<p-confirmDialog></p-confirmDialog> 
 
