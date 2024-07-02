@@ -1,5 +1,7 @@
 import { Component, OnInit, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { ConfirmationService } from 'primeng/api';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +27,7 @@ export class AppComponent implements OnInit {
   @ViewChild('partialDateBtn') partialDateBtn!: ElementRef;
   @ViewChild('op', { static: false }) overlaypanel!: OverlayPanel;
 
-  constructor(private elRef: ElementRef) { }
+  constructor(private elRef: ElementRef, private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     this.selectedDate = this.currentDate;
@@ -39,7 +41,7 @@ export class AppComponent implements OnInit {
   }
 
   updateYearsGrid() {
-    this.startYear = this.currentYear - 7; 
+    this.startYear = this.currentYear - 7;
     this.endYear = this.currentYear;
     this.years = [];
 
@@ -57,7 +59,7 @@ export class AppComponent implements OnInit {
     }
     this.updateYearsGrid();
   }
-  
+
   previousYears() {
     this.currentYear -= 8;
     this.updateYearsGrid();
@@ -65,23 +67,26 @@ export class AppComponent implements OnInit {
 
   setCurrentYear(year: number) {
     this.partialSelectedYear = year;
-    this.dateVal = year.toString();
+    this.checkPartialDateCompletion();
   }
-  
+
   setCurrentMonth(month: any) {
     const monthIndex = this.months.findIndex(x => x.toLowerCase() === month.toLowerCase());
     const maxMonthIndex = this.partialSelectedYear === 2024 ? 5 : 11; // June is month index 5
-  
     if (monthIndex <= maxMonthIndex) {
       this.partialSelectedMonth = monthIndex;
-  
-      if (this.partialSelectedYear === null) {
-        this.partialSelectedYear = new Date().getFullYear();
-      }
-  
-      this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+      this.checkPartialDateCompletion();
     }
   }
+
+  checkPartialDateCompletion() {
+    if (this.partialSelectedYear !== null && this.partialSelectedMonth !== null) {
+      this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+      this.partialDate = false;
+      this.overlaypanel.hide();
+    }
+  }
+
 
   toggleCalendar(event?: any) {
     if (event?.target?.value == "") {
@@ -100,10 +105,25 @@ export class AppComponent implements OnInit {
   }
 
   toggleFullDate(event: any) {
-    this.partialDate = false;
-    this.showCalendar = true;
-    this.overlaypanel.hide();
-    this.preventClosing(event);
+    if (this.partialDate) {
+      this.confirmationService.confirm({
+        message: 'Do you want to clear the partial date?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.clearPartialDate();
+          this.partialDate = false;
+          this.showCalendar = true;
+          this.overlaypanel.hide();
+          this.preventClosing(event);
+        }
+      });
+    } else {
+      this.partialDate = false;
+      this.showCalendar = true;
+      this.overlaypanel.hide();
+      this.preventClosing(event);
+    }
   }
 
   togglePartialDate(event: any) {
@@ -111,6 +131,12 @@ export class AppComponent implements OnInit {
     this.showCalendar = false;
     this.overlaypanel.show(event);
     this.preventClosing(event);
+  }
+
+  clearPartialDate() {
+    this.partialSelectedYear = null;
+    this.partialSelectedMonth = null;
+    this.dateVal = '';
   }
 
   preventClosing(event: Event) {
@@ -131,6 +157,7 @@ export class AppComponent implements OnInit {
       let dateArr = this.dateVal.split('-');
       this.currentYear = Number(dateArr[2]);
       this.toggleCalendar();
+      this.showCalendar = false;  // Close the calendar
     }
   }
 
@@ -145,8 +172,9 @@ export class AppComponent implements OnInit {
   }
 
   prevMonth() {
-    this.currentMonth--;
-    if (this.currentMonth < 0) {
+    if (this.currentMonth > 0) {
+      this.currentMonth--;
+    } else {
       this.currentMonth = 11;
       this.currentYear--;
     }
@@ -154,12 +182,19 @@ export class AppComponent implements OnInit {
   }
 
   nextMonth() {
-    this.currentMonth++;
-    if (this.currentMonth > 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    if (this.currentYear < currentYear || (this.currentYear === currentYear && this.currentMonth < currentMonth)) {
+      if (this.currentMonth < 11) {
+        this.currentMonth++;
+      } else {
+        this.currentMonth = 0;
+        this.currentYear++;
+      }
+      this.generateCalendar();
     }
-    this.generateCalendar();
   }
 
   generateCalendar() {
@@ -208,9 +243,9 @@ export class AppComponent implements OnInit {
   }
 
   clearAndEnterNewDate() {
-    this.selectedDate = null; 
-    this.dateVal = ''; 
-    this.showCalendar = false; 
+    this.selectedDate = null;
+    this.dateVal = '';
+    this.showCalendar = false;
     this.partialSelectedYear = null;
     this.partialSelectedMonth = null;
   }
@@ -222,7 +257,6 @@ export class AppComponent implements OnInit {
   isPartialMonthSelected(monthIndex: number): boolean {
     const currentMonthIndex = new Date().getMonth();
     const maxMonthIndex = this.partialSelectedYear === 2024 ? 5 : 11;
-  
     return (
       this.partialSelectedMonth === monthIndex &&
       ((this.partialSelectedYear === new Date().getFullYear() && monthIndex <= currentMonthIndex) ||
@@ -247,5 +281,13 @@ export class AppComponent implements OnInit {
   isNextArrowVisible(): boolean {
     return this.currentYear < 2024;
   }
-}
 
+  isMonthSelectable(monthIndex: number): boolean {
+    const currentMonthIndex = new Date().getMonth();
+    const maxMonthIndex = this.partialSelectedYear === 2024 ? 5 : 11;
+    return (
+      this.partialSelectedYear !== new Date().getFullYear() ||
+      monthIndex <= currentMonthIndex
+    );
+  }
+}
