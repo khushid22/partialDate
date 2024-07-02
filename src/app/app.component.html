@@ -31,9 +31,10 @@
     </div>
     <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true" (click)="preventClosing($event)">
       <ng-template pTemplate>
-        <button *ngIf="partialDate" class="full-date-button" (click)="toggleFullDate($event)">{{'full date'}}</button>
         <div class="widget-wrapper">
           <div class="widget-wrapper-left">
+            <span *ngIf="dateVal" (click)="clearAndEnterNewDate()" class="clear-button">×</span>
+            <button *ngIf="partialDate" class="full-date-button" (click)="toggleFullDate($event)">{{'full date'}}</button>
             <div class="year-widget-header header">
               <button pButton pRipple type="button" icon="pi pi-chevron-left" class="p-button-rounded p-button-text btn" (click)="previousYears()">&lt;</button>
               <span>{{ startYear }} - {{ endYear }}</span>
@@ -73,4 +74,3 @@
 </div>
 
 <p-confirmDialog></p-confirmDialog> 
-
