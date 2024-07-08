@@ -169,11 +169,11 @@ td {
   }
 }
 .calendar-widget table td:hover:not(.selected) {
-  background-color: #f0f0f0; /* Light grey background on hover */
+  background-color: #f0f0f0; 
 }
 
-/* Selected State Color */
 .calendar-widget table td.selected {
-  background-color: #007bff; /* Blue background for selected date */
-  color: #fff; /* White text color for selected date */
+  background-color: #007bff; 
+  color: #fff; 
 }
+
