@@ -8,9 +8,9 @@
         <button (click)="prevMonth()" class="btn">&lt;</button>
         <span>{{ months[currentMonth] }}</span>
         <span>{{ currentYear }}</span>
-        <button 
-          (click)="nextMonth()" 
-          class="btn" 
+        <button
+          (click)="nextMonth()"
+          class="btn"
           [disabled]="currentYear >= currentDate.getFullYear() && currentMonth >= currentDate.getMonth()"
         >&gt;</button>
       </div>
@@ -19,10 +19,10 @@
           <th *ngFor="let day of days">{{ day }}</th>
         </tr>
         <tr *ngFor="let week of calendar">
-          <td *ngFor="let day of week" 
-              [class.selected]="isSelected(day)" 
-              [class.disabled]="isFutureDate(day)" 
-              (click)="selectDate(day)" 
+          <td *ngFor="let day of week"
+              [class.selected]="isSelected(day)"
+              [class.disabled]="isFutureDate(day)"
+              (click)="selectDate(day)"
               [class.today]="isToday(day)">
             {{ day ? day.date?.getDate() : '' }}
           </td>
@@ -42,8 +42,7 @@
             <div class="year-widget-content">
               <div *ngFor="let row of years" class="grid-container">
                 <div *ngFor="let year of row" class="grid-item"
-                     [class.selected]="isPartialYearSelected(year)"
-                     [class.current]="isCurrentYear(year)"
+                     [ngClass]="getPartialYearClass(year)"
                      (click)="setCurrentYear(year)">
                   {{ year }}
                 </div>
@@ -56,18 +55,17 @@
             </div>
             <div class="month-widget-content grid-container">
               <ng-container *ngFor="let month of months; let i = index">
-                <div class="grid-item" 
-                     [class.selected]="isPartialMonthSelected(i)" 
-                     [class.current]="isCurrentMonth(i)"
+                <div class="grid-item"
+                     [ngClass]="getPartialMonthClass(i)"
                      [class.non-clickable]="!isMonthSelectable(i)"
                      (click)="isMonthSelectable(i) ? setCurrentMonth(month) : null">
                   {{ month }}
                 </div>
               </ng-container>
-            </div>          
+            </div>         
           </div>
         </div>
       </ng-template>
     </p-overlayPanel>
   </div>
-</div>
+ </div>
