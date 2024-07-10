@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   years!: number[][];
   @ViewChild('partialDateBtn') partialDateBtn!: ElementRef;
   @ViewChild('op', { static: false }) overlaypanel!: OverlayPanel;
+  
 
   constructor(private elRef: ElementRef, private confirmationService: ConfirmationService) { }
 
@@ -99,28 +100,29 @@ export class AppComponent implements OnInit {
           this.showCalendar = !this.showCalendar;
         }
         if (this.months.includes(selectedDateArr[0])) {
-          this.partialDate = false;
-          this.showCalendar = true;
+          this.overlaypanel.show(event);
         }
       }
     }
   }
-  
-  
+ 
 
   toggleFullDate(event: any) {
-    this.partialDate = false;  
-    this.showCalendar = true;  
+    this.partialDate = false;
     this.overlaypanel.hide();  
-    this.preventClosing(event);  
+    this.showCalendar = true;  
+    this.clearAndEnterNewDate();  
+    this.preventClosing(event);
   }
+  
 
   togglePartialDate(event: any) {
-    this.partialDate = true;  
+    this.partialDate = true;
     this.overlaypanel.show(event);  
-    this.clearAndEnterNewDate();  
-    this.preventClosing(event);  
+    this.clearAndEnterNewDate(); 
+    this.preventClosing(event);
   }
+  
   
 
   clearPartialDate() {
@@ -214,7 +216,7 @@ export class AppComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    const day = date.getDate();
+    const day = date.getDate().toString().padStart(2, '0'); 
     const month = this.months[date.getMonth()];
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
@@ -235,7 +237,7 @@ export class AppComponent implements OnInit {
   clearAndEnterNewDate() {
     this.selectedDate = null;
     this.dateVal = '';
-    this.showCalendar = false;
+    this.showCalendar = true;  
     this.partialSelectedYear = null;
     this.partialSelectedMonth = null;
   }
