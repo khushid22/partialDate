@@ -31,7 +31,7 @@
     </div>
     <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true" (click)="preventClosing($event)">
       <ng-template pTemplate>
-        <button *ngIf="partialDate" class="full-date-button" (click)="toggleFullDate($event)">full date</button>
+        <button class="full-date-button" (click)="toggleFullDate($event)">full date</button>
         <div class="widget-wrapper">
           <div class="widget-wrapper-left">
             <div class="year-widget-header header">
@@ -66,6 +66,6 @@
           </div>
         </div>
       </ng-template>
-    </p-overlayPanel>
+    </p-overlayPanel>    
   </div>
 </div>
