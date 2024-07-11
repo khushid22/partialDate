@@ -1,71 +1,78 @@
-<div class="date-picker-container">
-  <input type="text" id="datepicker" style="width: 333px;" [(ngModel)]="dateVal" placeholder="Select Date" (click)="toggleCalendar($event);partialDate=false;">
-  <span *ngIf="dateVal" (click)="clearAndEnterNewDate()" class="clear-button">×</span>
-  <div class="datepicker-widget-container">
-    <div class="calendar-widget" *ngIf="showCalendar" (click)="preventClosing($event)">
-      <button *ngIf="showCalendar && !partialDate" class="partial-date-button" #partialDateBtn (click)="togglePartialDate($event);partialDate=true;showCalendar=false">{{'partial date'}}</button>
-      <div class="calendar-header">
-        <button (click)="prevMonth()" class="btn">&lt;</button>
-        <span>{{ months[currentMonth] }}</span>
-        <span>{{ currentYear }}</span>
-        <button
-          (click)="nextMonth()"
-          class="btn"
-          [disabled]="currentYear >= currentDate.getFullYear() && currentMonth >= currentDate.getMonth()"
-        >&gt;</button>
+<div class="centering-container">
+  <div class="user-date">
+    <h3>User Inputted Date:</h3>
+    <p>Full Date: {{ getUserDate().fullDate }}</p>
+    <p>Partial Date: {{ getUserDate().partialDate }}</p>
+  </div>
+  <div class="date-picker-container">
+    <input type="text" id="datepicker" style="width: 333px;" [(ngModel)]="dateVal" placeholder="Select Date" (click)="toggleCalendar($event);partialDate=false;">
+    <span *ngIf="dateVal" (click)="clearAndEnterNewDate()" class="clear-button">×</span>
+    <div class="datepicker-widget-container">
+      <div class="calendar-widget" *ngIf="showCalendar" (click)="preventClosing($event)">
+        <button *ngIf="showCalendar && !partialDate" class="partial-date-button" #partialDateBtn (click)="togglePartialDate($event);partialDate=true;showCalendar=false">{{'partial date'}}</button>
+        <div class="calendar-header">
+          <button (click)="prevMonth()" class="btn">&lt;</button>
+          <span>{{ months[currentMonth] }}</span>
+          <span>{{ currentYear }}</span>
+          <button
+            (click)="nextMonth()"
+            class="btn"
+            [disabled]="currentYear >= currentDate.getFullYear() && currentMonth >= currentDate.getMonth()"
+          >&gt;</button>
+        </div>
+        <table>
+          <tr>
+            <th *ngFor="let day of days">{{ day }}</th>
+          </tr>
+          <tr *ngFor="let week of calendar">
+            <td *ngFor="let day of week"
+                [class.selected]="isSelected(day)"
+                [class.disabled]="isFutureDate(day)"
+                (click)="selectDate(day)"
+                [class.today]="isToday(day)">
+              {{ day ? day.date?.getDate() : '' }}
+            </td>
+          </tr>
+        </table>
       </div>
-      <table>
-        <tr>
-          <th *ngFor="let day of days">{{ day }}</th>
-        </tr>
-        <tr *ngFor="let week of calendar">
-          <td *ngFor="let day of week"
-              [class.selected]="isSelected(day)"
-              [class.disabled]="isFutureDate(day)"
-              (click)="selectDate(day)"
-              [class.today]="isToday(day)">
-            {{ day ? day.date?.getDate() : '' }}
-          </td>
-        </tr>
-      </table>
-    </div>
-    <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true" (click)="preventClosing($event)">
-      <ng-template pTemplate>
-        <button class="full-date-button" (click)="toggleFullDate($event)">full date</button>
-        <div class="widget-wrapper">
-          <div class="widget-wrapper-left">
-            <div class="year-widget-header header">
-              <button pButton pRipple type="button" icon="pi pi-chevron-left" class="p-button-rounded p-button-text btn" (click)="previousYears()">&lt;</button>
-              <span>{{ startYear }} - {{ endYear }}</span>
-              <button *ngIf="isNextArrowVisible()" pButton type="button" icon="pi pi-chevron-right" class="p-button-rounded p-button-text btn" (click)="nextYears()">&gt;</button>
-            </div>
-            <div class="year-widget-content">
-              <div *ngFor="let row of years" class="grid-container">
-                <div *ngFor="let year of row" class="grid-item"
-                     [ngClass]="getPartialYearClass(year)"
-                     (click)="setCurrentYear(year)">
-                  {{ year }}
+      <p-overlayPanel class="partial-overlay" [baseZIndex]="1000" #op [dismissable]="true" [showCloseIcon]="true" (click)="preventClosing($event)">
+        <ng-template pTemplate>
+          <button class="full-date-button" (click)="toggleFullDate($event)">full date</button>
+          <div class="widget-wrapper">
+            <div class="widget-wrapper-left">
+              <div class="year-widget-header header">
+                <button pButton pRipple type="button" icon="pi pi-chevron-left" class="p-button-rounded p-button-text btn" (click)="previousYears()">&lt;</button>
+                <span>{{ startYear }} - {{ endYear }}</span>
+                <button *ngIf="isNextArrowVisible()" pButton type="button" icon="pi pi-chevron-right" class="p-button-rounded p-button-text btn" (click)="nextYears()">&gt;</button>
+              </div>
+              <div class="year-widget-content">
+                <div *ngFor="let row of years" class="grid-container">
+                  <div *ngFor="let year of row" class="grid-item"
+                       [ngClass]="getPartialYearClass(year)"
+                       (click)="setCurrentYear(year)">
+                    {{ year }}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="widget-wrapper-right">
-            <div class="month-widget-header">
-              <span>{{ partialSelectedYear }}</span>
+            <div class="widget-wrapper-right">
+              <div class="month-widget-header">
+                <span>{{ partialSelectedYear }}</span>
+              </div>
+              <div class="month-widget-content grid-container">
+                <ng-container *ngFor="let month of months; let i = index">
+                  <div class="grid-item"
+                       [ngClass]="getPartialMonthClass(i)"
+                       [class.non-clickable]="!isMonthSelectable(i)"
+                       (click)="isMonthSelectable(i) ? setCurrentMonth(month) : null">
+                    {{ month }}
+                  </div>
+                </ng-container>
+              </div>         
             </div>
-            <div class="month-widget-content grid-container">
-              <ng-container *ngFor="let month of months; let i = index">
-                <div class="grid-item"
-                     [ngClass]="getPartialMonthClass(i)"
-                     [class.non-clickable]="!isMonthSelectable(i)"
-                     (click)="isMonthSelectable(i) ? setCurrentMonth(month) : null">
-                  {{ month }}
-                </div>
-              </ng-container>
-            </div>         
           </div>
-        </div>
-      </ng-template>
-    </p-overlayPanel>    
+        </ng-template>
+      </p-overlayPanel>
+    </div>
   </div>
 </div>
