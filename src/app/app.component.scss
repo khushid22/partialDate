@@ -1,3 +1,9 @@
+.centering-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+}
 .date-picker-container {
   position: relative;
   display: inline-block;
@@ -8,11 +14,11 @@
  .calendar-icon {
   cursor: pointer;
  }
- .calendar-widget{
-  position: fixed;
-  top: 50%;
+ .calendar-widget {
+  position: absolute;
+  top: 100%; 
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%); 
   width: 320px;
   background-color: #fff;
   padding: 10px;
@@ -20,7 +26,8 @@
   border: 1px solid #c8c8c8;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   border-radius: 4px;
- }
+}
+
  .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -180,5 +187,14 @@ td {
   color: #fff; 
 }
 
-
+.user-date {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
