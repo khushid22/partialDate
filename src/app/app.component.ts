@@ -26,6 +26,8 @@ export class AppComponent implements OnInit {
   @ViewChild('partialDateBtn') partialDateBtn!: ElementRef;
   @ViewChild('op', { static: false }) overlaypanel!: OverlayPanel;
   
+  // Global object to store the user's inputted date
+  userDate: { fullDate: string, partialDate: string } = { fullDate: '', partialDate: '' };
 
   constructor(private elRef: ElementRef, private confirmationService: ConfirmationService) { }
 
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
     if (this.partialSelectedYear !== null) {
       if (this.partialSelectedMonth !== null) {
         this.dateVal = `${this.months[this.partialSelectedMonth]}-${this.partialSelectedYear}`;
+        this.userDate.partialDate = this.dateVal;
         this.overlaypanel.hide();  
       } else {
         this.dateVal = `${this.partialSelectedYear}`;
@@ -146,6 +149,7 @@ export class AppComponent implements OnInit {
     if (dateObj.date) {
       this.selectedDate = dateObj.date;
       this.dateVal = this.formatDate(dateObj.date);
+      this.userDate.fullDate = this.dateVal;
       let dateArr = this.dateVal.split('-');
       this.currentYear = Number(dateArr[2]);
       this.toggleCalendar();
@@ -312,5 +316,9 @@ export class AppComponent implements OnInit {
       return 'current';
     }
     return '';
+  }
+
+  getUserDate(): { fullDate: string, partialDate: string } {
+    return this.userDate;
   }
 }
