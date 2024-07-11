@@ -1,12 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 .p-overlaypanel.p-component{
     transform-origin: center top;
-    top: 19px !important;
+    top: 363px !important;
     --overlayArrowLeft: 0px;
     transform: translateY(0px);
     opacity: 1;
     position: absolute;
-    left: 7px !important;
+    left: 460px !important;
     background-color: #fff;
     padding: 10px;
     z-index: 1000;
@@ -20,8 +20,8 @@
     align-items: center;
     overflow: hidden; 
     position: absolute !important;
-    top: 3px;
-    right: 3px;
+    top: 15px;
+    right: 15px;
     &::before{
         content: '\2715';
     }
